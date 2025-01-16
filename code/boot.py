@@ -1,5 +1,5 @@
 # HPYF-bootselect 2025 Gxxk
-# 在boot.py运行阶段供用户选择加载项
+# 在boot.py运行阶段供用户选择加载项并保持运行性能
 # 本模块是hPyFrame(HPYF)的一部分。
 # HPYF是自由软件，按照AGPL v3+进行许可。
 # AGPL v3+(指 AGPL V3-or-later):https://www.gnu.org/licenses/agpl.txt
@@ -20,7 +20,7 @@ oled.fill(0)
 
 
 buttonStat=[0,0]
-def ButtonStatChange(source):
+def ButtonStatChange(source:int)->None:
     global buttonStat
     buttonStat[source]=True
 ButtonA = Pin(0,Pin.IN,Pin.PULL_UP)
@@ -36,7 +36,7 @@ else:
     rename("main.py","main.py.bak")
     rename("HPYFLoader.py","main.py")
 
-def TimerCallback(RestoreFileName):
+def TimerCallback(RestoreFileName:bool)->None:
     # 对象销毁 IRQ回调注销
     ButtonA.irq(handler=None);ButtonB.irq(handler=None)
     del Oled,SSD1106_I2C,I2C,Timer,Pin,sleep,ButtonStatChange,ButtonA,ButtonB,TimerCallback
@@ -46,4 +46,5 @@ def TimerCallback(RestoreFileName):
     del rename
     __import__("gc").collect() 
     # 我轻轻的走了 正如我轻轻的来
+
 Timer(0).init(period=1500, mode=Timer.ONE_SHOT, callback=lambda:TimerCallback(buttonStat))
